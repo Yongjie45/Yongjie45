@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Jasper的待办清单</title>
+    <!-- 引入 CSS 样式文件 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+        <h1>📝Jasper待办</h1>
+
+        <!-- 输入区：一个输入框 + 一个按钮 -->
+        <div class="input-area">
+            <input type="text" id="todo-input" placeholder="添加待办事项...">
+            <button id="add-btn">添加</button>
+        </div>
+
+        <!-- 列表区：待办会动态加到这里 -->
+        <ul id="todo-list"></ul>
+    </div>
+
+    <!-- 引入 JS 文件，放在 body 最后，保证 HTML 先加载完 -->
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+/* ===== 全局重置：去掉浏览器默认的丑样式 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;     /* 让 padding 不会撑大元素，非常重要 */
+}
+
+/* ===== 页面整体背景 ===== */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: "微软雅黑", "pingfang sc", sans-serif;
+    padding: 20px;
+    min-height: 100vh;           /* 至少占满整个屏幕高度 */
+    display: flex;               /* 用弹性布局 */
+    justify-content: center;     /* 水平居中 */
+    align-items: center;         /* 垂直居中 */
+}
+
+/* ===== 白色卡片容器 ===== */
+.app {
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;            /* 最宽 480px，手机上会自动缩小 */
+    border-radius: 16px;         /* 圆角 */
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);  /* 阴影，让卡片"浮起来" */
+}
+
+/* ===== 标题 ===== */
+.app h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+/* ===== 输入区：输入框 + 按钮 横向排列 ===== */
+.input-area {
+  display: flex;               /* 让子元素横着排 */
+  gap: 8px;                    /* 两个元素之间留 8px 空隙 */
+  margin-bottom: 24px;
+}
+
+/* ===== 输入框 ===== */
+#todo-input {
+  flex: 1;                     /* 占满剩余空间 */
+  padding: 12px 16px;
+  font-size: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  outline: none;               /* 去掉点击时的默认蓝框 */
+  transition: border-color 0.2s; /* 边框变色时平滑过渡 */
+}
+
+/* 输入框聚焦时（鼠标点进去）变成紫色 */
+#todo-input:focus {
+  border-color: #667eea;
+}
+/* ===== 按钮 ===== */
+#add-btn {
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+  background: #667eea;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;             /* 鼠标移上去变小手 */
+  transition: background 0.2s;
+  white-space: nowrap;         /* 按钮文字不换行 */
+}
+
+/* 鼠标悬停在按钮上时，颜色加深 */
+#add-btn:hover {
+  background: #5568d3;
+}
+
+/* 按钮被按下时，稍微缩小一点，有"点击感" */
+#add-btn:active {
+  transform: scale(0.97);
+}
+
+ /* ============================================================================ */
+
+/* ===== 待办列表 ===== */
+#todo-list {
+  list-style: none;            /* 去掉前面的小圆点 */
+}
+
+/* 单条待办 */
+#todo-list li {
+  display: flex;               /* 左边文字，右边删除按钮 */
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f7f8fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #333;
+  animation: slideIn 0.3s ease; /* 出现时有个小动画 */
+}
+
+/* 删除按钮 */
+#todo-list li button {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #fff;
+  background: #ff5c5c;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#todo-list li button:hover {
+  background: #e63946;
+}
+
+/* ===== 自定义动画：从右边滑入 ===== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ===== 已完成状态 ===== */
+#todo-list li.done span {
+  text-decoration: line-through;    /* 删除线 */
+  color: #999;                    /* 颜色变灰 */
+  cursor: pointer;                  /* 鼠标变小手，提示可点 */
+}
+
+/* 未完成时，鼠标移到文字上也是小手 */
+#todo-list li span {
+  cursor: pointer;
+  flex: 1;                          /* 让文字占满左边，方便点击 */
+  user-select: none;                /* 双击不选中文字，体验更好，避免误操作 */
+}
