@@ -44,7 +44,7 @@ function addTodo() {
         li.classList.toggle("done", checkbox.checked);
     });
 
-    // --- 2.6 创建文字 span     ---
+    // --- 2.6 创建文字 span ---
     // 用 span 包起来，方便以后单独控制文字样式
     // textContent 是"纯文本"，比 innerHTML 更安全
     const span = document.createElement("span");

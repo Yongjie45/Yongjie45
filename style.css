@@ -92,7 +92,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;              /* 让子元素之间有间距 */
+  gap: 12px;                   /* 让子元素之间有间距 */
   padding: 12px 16px;
   background: #f7f8fa;
   border-radius: 8px;
