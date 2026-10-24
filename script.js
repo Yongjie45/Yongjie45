@@ -1,86 +1,166 @@
+// ================================================
+// 【第 1 块】找到页面元素
+// ================================================
+const input = document.getElementById("todo-input");
+const addBtn = document.getElementById("add-btn");
+const list = document.getElementById("todo-list");
 
-// ===================  功能A：新建待办（可标记完成）  =============================
 
-// 第一步：找到页面上要操作的 3 个元素（输入框、添加按钮、；列表容器）
-// ============================================
-// document.getElementById("xxx") 就是"按 id 找元素"
-// 找到后存到变量里，后面反复用
+// ================================================
+// 【第 2 块】数据源：从 localStorage 读取
+// ================================================
+// localStorage 只能存"字符串"，所以要 JSON.parse 转回数组
+// 如果没存过 → getItem 返回 null → 用 || [] 兜底成空数组
+let todos = JSON.parse(localStorage.getItem("jasper-todos")) || [];
 
-const input = document.getElementById("todo-input");   // 输入框
-const addBtn = document.getElementById("add-btn");      // 添加按钮
-const list = document.getElementById("todo-list");      // 列表容器 <ul>
 
-// 第二步：给"添加"按钮绑定点击事件
-// ============================================
-// addEventListener("click", 函数) 的意思是：
-// "当这个元素被点击时，执行这个函数"
+// ================================================
+// 【第 3 块】保存函数：把数组存进 localStorage
+// ================================================
+function save() {
+    // 数组 → 字符串 再存
+    localStorage.setItem("jasper-todos", JSON.stringify(todos));
+}
 
-function addTodo() {
-    // --- 2.1 读取输入框的文字 ---
-    // .value 就是输入框里当前的内容
-    // .trim() 去掉首尾空格（防止用户只打了空格）
-    const text = input.value.trim();
 
-    // --- 2.2 空内容提示 ---
-    if (text === "") {
-        alert("请输入待办事项！");
-        return;                 // 结束函数，不再往下执行
+// ================================================
+// 【第 4 块】渲染函数：根据 todos 数组，把整个列表重画一遍
+// ================================================
+function render() {
+    // 4.1 先清空现有列表（因为要重画）
+    list.innerHTML = "";
+
+    // 4.2 遍历数组，为每条数据创建一个 li
+    todos.forEach(function (todo, index) {
+        // todo 格式：{ text: "学习", done: false }  index 是它在数组里的下标（0, 1, 2...）
+        // ---- 创建 li ----
+        const li = document.createElement("li");
+        if (todo.done) {
+            li.classList.add("done");   // 已完成 → 加 done 类
+        }
+
+        // ✨ 只有"新加入"的待办才播进入动画
+        if (todo.isNew) {
+            li.classList.add("enter");
+
+            // 动画播完后，移除这个 class（一次性的）
+            li.addEventListener("animationend", function () {
+                li.classList.remove("enter");
+            });
+
+            // 顺手把数据里的 isNew 清掉，避免以后刷新再播动画
+            delete todo.isNew;
+        }
+
+        // ---- 创建复选框 ----
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = todo.done;   // 数据里的状态 → 勾选框状态
+
+        // 勾选切换
+        checkbox.addEventListener("change", function () {
+            todos[index].done = checkbox.checked;   // 更新数据
+            save();                                 // 存
+            render();                               // 重画
+        });
+
+        // ---- 创建文字 span ----
+        const span = document.createElement("span");
+        span.textContent = todo.text;
+
+        // ✨ 新增：创建时间 span
+        const timeSpan = document.createElement("span");
+        timeSpan.className  = "time";            // 显示时间
+        if (todo.time) {
+            timeSpan.textContent = todo.time;   // 替换 T 为空格，显示更友好
+        } else {
+            timeSpan.textContent = "";   // 如果没有时间，就不显示
+        }
+
+        // ---- 创建删除按钮 ----
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "删除";
+        delBtn.addEventListener("click", function () {
+            todos.splice(index, 1);   // 从数组里删掉第 index 个
+            save();
+            render();
+        });
+
+        // ---- 组装 ----
+        li.appendChild(checkbox);
+        li.appendChild(span);
+        li.appendChild(timeSpan);   
+        li.appendChild(delBtn);
+        list.appendChild(li);
+
+    });
+
+    // ==========================================
+    // ✨ 新增：更新底部统计
+    // ==========================================
+    const stats = document.getElementById("stats");
+
+    if (todos.length === 0) {
+        // 【情况 1】空列表 —— 优先判断！
+        stats.textContent = "还没有待办，先加一条吧 ✨";
+    } else {
+        // 【情况 2】有数据 —— 再细分
+        const undoneCount = todos.filter(function (t) { return t.done === false; }).length;        // .length 拿到筛完的个数
+
+        if (undoneCount === 0) {
+            stats.textContent = "全部完成 🎉";
+        } else {
+            // stats.textContent = "总计" + undoneCount + "条，未完成" + undoneCount + "条";
+            stats.textContent = "还有 " + undoneCount + " 项未完成";
+        }
     }
 
-    // --- 2.3 创建 li ---
-    const li = document.createElement("li");
+}
 
-    // --- 2.4 创建复选框 ---
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
+// ================================================
+// 【第 5 块】添加待办的函数
+// ================================================
+function addTodo() {
+    //console.log("🔥 监控：addTodo 被触发了！"); 
+    const text = input.value.trim();
 
-    // --- 2.5 给复选框绑定 change 事件：切换 li 的 done 类 ---
-    // 注意用 change 而不是 click —— checkbox 的"值变了"用 change 更规范
-    checkbox.addEventListener("change", function () {
-        // checkbox.checked 是 true/false
-        // classList.toggle("done", true)  → 加上 done
-        // classList.toggle("done", false) → 去掉 done
-        // 第二个参数是"强制指定"，比 switch 写法更简洁
-        li.classList.toggle("done", checkbox.checked);
+    const timeInput = document.getElementById("todo-time");
+    const timeValue = timeInput.value;           // 获取时间选择器的值
+
+    if (text === "") {
+        alert("请输入待办事项！");
+        return;
+    }
+
+    // 往数组里"推"一条新数据
+    todos.push({
+        text: text,     // 内容
+        done: false,    // 默认未完成
+        isNew: true,
+        time: timeValue,
     });
 
-    // --- 2.6 创建文字 span ---
-    // 用 span 包起来，方便以后单独控制文字样式
-    // textContent 是"纯文本"，比 innerHTML 更安全
-    const span = document.createElement("span");
-    span.textContent = text;
+    input.value = "";   // 清空输入框
+    timeInput.value = ""; // 清空时间选择器
+    input.focus();      // 光标回到输入框
 
-    // --- 2.7 创建删除按钮 ---
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "删除";
-    delBtn.addEventListener("click", function () {
-        li.remove();            // 从页面上删掉
-    });
+    save();     // 存
+    render();   // 重画
+}
 
-    // --- 2.8 给删除按钮绑定事件 ---
-    delBtn.addEventListener("click", function () {
-        li.remove();            // 把这个 li 从页面上删掉
-    });
 
-    // --- 2.9 组装：checkbox + span + delBtn 塞进 li ---
-    li.appendChild(checkbox); 
-    li.appendChild(span);
-    li.appendChild(delBtn);
-
-    // --- 2.10 把 li 塞进列表 <ul> ---
-    list.appendChild(li);
-
-    // --- 2.11 清空输入框，方便用户输入下一条 ---
-    input.value = "";
-    input.focus();
-};
-
-// 第二步分支：给“按回车 -- Enter”绑定事件
-// 让用户按回车也能添加待办事项
+// ================================================
+// 【第 6 块】绑定事件
+// ================================================
 addBtn.addEventListener("click", addTodo);
 
 input.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    addTodo();
-  }
+    if (event.key === "Enter") {
+        addTodo();
+    }
 });
+
+// ================================================
+// 【第 7 块】首次打开页面：把存的数据画出来
+// ================================================
+render();

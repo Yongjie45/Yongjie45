@@ -19,11 +19,12 @@
         <!-- 输入区：一个输入框 + 一个按钮 -->
         <div class="input-area">
             <input type="text" id="todo-input" placeholder="添加待办事项...">
-            <button id="add-btn">添加</button>
+            <input type="date" id="todo-time">        <!-- 新增时间选择器 -->
+            <button id="add-btn" type="button">添加</button>
         </div>
 
-        <!-- 列表区：待办会动态加到这里 -->
-        <ul id="todo-list"></ul>
+        <ul id="todo-list"></ul>                <!-- 列表区：待办会动态加到这里 -->
+        <p id="stats"></p>                      <!-- 统计信息 -->
     </div>
 
     <!-- 引入 JS 文件，放在 body 最后，保证 HTML 先加载完 -->

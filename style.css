@@ -20,7 +20,7 @@ body {
 .app {
     background: #ffffff;
     width: 100%;
-    max-width: 480px;            /* 最宽 480px，手机上会自动缩小 */
+    max-width: 680px;            /* 最宽 480px，手机上会自动缩小 */
     border-radius: 16px;         /* 圆角 */
     padding: 32px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);  /* 阴影，让卡片"浮起来" */
@@ -44,12 +44,25 @@ body {
 /* ===== 输入框 ===== */
 #todo-input {
   flex: 1;                     /* 占满剩余空间 */
+  min-width: 100px;                 /* 防止内容过长撑破布局 */
   padding: 12px 16px;
   font-size: 15px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   outline: none;               /* 去掉点击时的默认蓝框 */
   transition: border-color 0.2s; /* 边框变色时平滑过渡 */
+}
+
+/* 时间选择器 */
+#todo-time {
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit; /* 让字体跟页面一致 */
+  color: #555;
+  width: 130px;         /* 固定宽度，防止过长 */
 }
 
 /* 输入框聚焦时（鼠标点进去）变成紫色 */
@@ -99,12 +112,13 @@ body {
   margin-bottom: 8px;
   font-size: 15px;
   color: #333;
-  animation: slideIn 0.3s ease;
+
 }
 
 /* 删除按钮 */
 #todo-list li button {
   padding: 6px 12px;
+  margin-left: 4px;
   font-size: 13px;
   color: #fff;
   background: #ff5c5c;
@@ -112,6 +126,17 @@ body {
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s;
+}
+
+/* 时间文字样式 */
+#todo-list li .time {
+  font-size: 12px;
+  color: #888;
+  margin-left: auto;            /* ✨ 关键：把左边的剩余空间全部吸光，把自己推远 */
+  margin-right: 4px;           /* 跟右边的删除按钮留点空隙 */
+  padding-left: 12px;           /* 跟文字保持距离 */
+  white-space: nowrap;          /* 时间不准换行 */
+  flex-shrink: 0;               /* 绝对不允许时间被压缩 */
 }
 
 #todo-list li button:hover {
@@ -127,16 +152,16 @@ body {
   accent-color: #667eea;
 }
 
-/* 文字：占满中间剩余空间 */
-#todo-list li span {
-  flex: 1;                     /* 撑满中间的空白区域 */
+#todo-list li span:not(.time) {
+  flex-shrink: 1;               /* 如果文字太长，允许它换行或者缩小 */
+  flex: 1;                     
   user-select: none;
+  word-break: break-all;        /* 确保超长英文也能正常换行 */
 }
 
-/* 已完成状态：文字加删除线 + 变灰 */
-#todo-list li.done span {
-  text-decoration: line-through;
-  color: #aaa;
+/* 只有"新加入"的 li 才有进入动画 */
+#todo-list li.enter {
+  animation: slideIn 0.3s ease;
 }
 
 /* ===== 自定义动画：从右边滑入 ===== */
@@ -151,9 +176,29 @@ body {
   }
 }
 
-/* ===== 已完成状态 ===== */
-#todo-list li.done span {
-  text-decoration: line-through;    /* 删除线 */
-  color: #999;                    /* 颜色变灰 */
-  cursor: pointer;                  /* 鼠标变小手，提示可点 */
+/* 移动端小屏幕适配：如果屏幕太窄，自动换行 */
+@media (max-width: 480px) {
+  .input-area {
+    flex-wrap: wrap;
+  }
+  #todo-time {
+    flex: 1;
+  }
+}
+
+
+/* 已完成状态：只给文字加删除线，时间不要划掉！ */
+#todo-list li.done span:not(.time) {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+/* ===== 底部统计 ===== */
+#stats {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #888;
+  padding-top: 16px;
+  border-top: 1px solid #eee;   /* 一条淡淡的分隔线 */
 }
