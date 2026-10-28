@@ -27,6 +27,17 @@ function save() {
 // 【第 4 块】渲染函数（只负责画页面）
 // ================================================
 function render() {
+    // ==========================================
+    // ✨ 新增 1：FLIP 第一步（First） - 记录旧位置
+    // ==========================================
+    const oldRects = new Map();
+    const items = list.querySelectorAll("li");
+    items.forEach(item => {
+        // 用文字内容作为唯一标识（因为没给元素加 id）
+        // 获取该元素在屏幕上的真实位置
+        oldRects.set(item.textContent, item.getBoundingClientRect());
+    });
+
     list.innerHTML = "";
 
     // 1. 准备要显示的数据
@@ -75,10 +86,10 @@ function render() {
             span.contentEditable = "true";
             span.classList.add("editing");
 
-            // ✨ 新增：加一个保护锁
+            // ✨ 加一个保护锁
             span.setAttribute("data-is-editing", "true");
             
-            // ✨ 修复 1：用 setTimeout 延迟聚焦，防止瞬间被 blur 吃掉
+            // ✨ 用 setTimeout 延迟聚焦，防止瞬间被 blur 吃掉
             setTimeout(() => {
                 span.focus();
             }, 10);
@@ -139,6 +150,32 @@ function render() {
         li.appendChild(timeSpan);
         li.appendChild(delBtn);
         list.appendChild(li);
+    });
+
+    // ==========================================
+    // ✨ 新增 2：FLIP 第三、四步（Invert & Play） - 计算差值并滑动
+    // ==========================================
+    const newItems = list.querySelectorAll("li");
+
+    newItems.forEach(newItem => {
+        // 拿到新位置
+        const newRect = newItem.getBoundingClientRect();
+        const oldRect = oldRects.get(item.textContent);
+        if(oldRect) {
+            // 计算 Y 轴上的位移差值（旧位置 - 新位置）
+            const deltaY = oldRect.top - newRect.top;
+            if(deltaY !== 0 ) {
+                // 第三步（Invert）：强行把它瞬移回老位置
+                item.style.transform = `translateY(${deltaY}px)`;
+                item.style.transition = "none";                     // 瞬移不能有过渡动画
+
+                // 第四步（Play）：下一帧让它滑到新位置
+                requestAnimationFrame(() => {
+                    item.style.transform = ""; // 清空位移，回归正常
+                    item.style.transition = "transform 0.3s ease"; // 给0.3秒的平滑过渡
+                });
+            }
+        }
     });
 
     // 3. 更新统计
