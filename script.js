@@ -156,7 +156,6 @@ function render() {
     // ✨ 新增 2：FLIP 第三、四步（Invert & Play） - 计算差值并滑动
     // ==========================================
     const newItems = list.querySelectorAll("li");
-
     newItems.forEach(newItem => {
         // 拿到新位置
         const newRect = newItem.getBoundingClientRect();
