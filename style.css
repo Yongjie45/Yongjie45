@@ -24,6 +24,9 @@ body {
     border-radius: 16px;         /* 圆角 */
     padding: 32px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);  /* 阴影，让卡片"浮起来" */
+    height: 600px;               /* 固定高度，你可以按自己喜好改成 500px 或 650px */
+    display: flex;               /* 让卡片内部也能控制布局 */
+    flex-direction: column;      /* 让卡片里的元素上下排列 */
 }
 
 /* ===== 标题 ===== */
@@ -51,6 +54,18 @@ body {
   border-radius: 8px;
   outline: none;               /* 去掉点击时的默认蓝框 */
   transition: border-color 0.2s; /* 边框变色时平滑过渡 */
+}
+
+/* 正在编辑时的文字状态 */
+#todo-list li span.editing {
+  outline: none;             /* 去掉默认的聚焦黑框 */
+  background: #fff;          /* 背景变白 */
+  border: 2px solid #667eea; /* 紫色边框 */
+  border-radius: 4px;
+  padding: 4px 8px;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.3); /* 一点发光效果 */
+  white-space: pre-wrap;     /* 允许换行，且保留空格 */
+  word-break: break-all;     /* 超长英文强行折行 */
 }
 
 /* 时间选择器 */
@@ -98,6 +113,9 @@ body {
 /* ===== 待办列表 ===== */
 #todo-list {
   list-style: none;            /* 去掉前面的小圆点 */
+  flex: 1;                     /* 占满卡片中间所有剩余的空间 */
+  overflow-y: auto;            /* 核心魔法：垂直方向内容超出时，出现滚动条 */
+  padding-right: 8px;          /* 给滚动条留点空隙，别贴着字 */
 }
 
 /* 单条待办 */
@@ -201,4 +219,63 @@ body {
   color: #888;
   padding-top: 16px;
   border-top: 1px solid #eee;   /* 一条淡淡的分隔线 */
+}
+
+/* ===== 筛选按钮组 ===== */
+.filter-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.filter-group button {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #666;
+  background: #f0f2f5;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-group button {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #666;
+  background: #f0f2f5;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-group button:hover {
+  background: #e4e7ed;
+}
+
+/* 被选中的按钮状态（紫色高亮） */
+.filter-group button.active {
+  color: #667eea;
+  background: #eef1ff;
+  border-color: #667eea;
+}
+
+/* ===== 美化滚动条（针对 Webkit 内核浏览器） ===== */
+#todo-list::-webkit-scrollbar {
+  width: 6px;                  /* 滚动条宽度 */
+}
+
+#todo-list::-webkit-scrollbar-thumb {
+  background: #ccc;            /* 滚动条滑块颜色 */
+  border-radius: 3px;          /* 滑块圆角 */
+}
+
+#todo-list::-webkit-scrollbar-thumb:hover {
+  background: #999;            /* 鼠标移上去颜色变深 */
+}
+
+#todo-list::-webkit-scrollbar-track {
+  background: transparent;     /* 滚动条轨道透明 */
 }

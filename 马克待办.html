@@ -16,7 +16,7 @@
     <div class="app">
         <h1>📝Jasper待办</h1>
 
-        <!-- 输入区：一个输入框 + 一个按钮 -->
+        <!-- 输入区：一个输入框 + 一个按钮 + 时间选择 -->
         <div class="input-area">
             <input type="text" id="todo-input" placeholder="添加待办事项...">
             <input type="date" id="todo-time">        <!-- 新增时间选择器 -->
@@ -24,6 +24,11 @@
         </div>
 
         <ul id="todo-list"></ul>                <!-- 列表区：待办会动态加到这里 -->
+        <div class="filter-group">
+            <button id="filter-all" class="active">全部</button>
+            <button id="filter-active">未完成</button>
+            <button id="filter-completed">已完成</button>
+        </div>
         <p id="stats"></p>                      <!-- 统计信息 -->
     </div>
 
